@@ -58,7 +58,7 @@ class ControlPanel extends StatelessWidget {
           child: IconButton(
             icon: const Icon(
               Icons.call_end,
-              color: Colors.red,
+              color: Colors.white,
             ),
             onPressed: onMeetingEnd,
           ),

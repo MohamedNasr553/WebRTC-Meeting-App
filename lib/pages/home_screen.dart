@@ -58,13 +58,13 @@ class _HomeScreenState extends State<HomeScreen> {
               context,
               "meetingId",
               "Enter Meeting ID",
-                  (val) {
+              (val) {
                 if (val.isEmpty) {
                   return "Meeting Id can't be empty";
                 }
                 return null;
               },
-                  (onSaved) {
+              (onSaved) {
                 meetingId = onSaved;
               },
               borderRadius: 10.0,
@@ -81,23 +81,59 @@ class _HomeScreenState extends State<HomeScreen> {
                 Flexible(
                   child: FormHelper.submitButton(
                     "Join Meeting",
-                        () {
+                    () {
                       if (validateAndSave()) {
                         validateMeeting(meetingId, context);
                       }
                     },
                   ),
                 ),
+                // Flexible(
+                //   child: FormHelper.submitButton(
+                //     "Start Meeting",
+                //         () async {
+                //       var response = await startMeeting();
+                //       if (response != null) {
+                //         final body = json.decode(response.body);
+                //         final meetingId = body['data'];
+                //         validateMeeting(meetingId, context);
+                //       } else {
+                //         // Handle the error gracefully, e.g., show a Snackbar or Dialog
+                //         ScaffoldMessenger.of(context).showSnackBar(
+                //           SnackBar(content: Text('Failed to start meeting. Please try again.')),
+                //         );
+                //       }
+                //     },
+                //   ),
+                // ),
                 Flexible(
                   child: FormHelper.submitButton(
                     "Start Meeting",
-                        () async {
+                    () async {
                       var response = await startMeeting();
-                      final body = json.decode(response!.body);
-
-                      final meetingId = body['data'];
-
-                      validateMeeting(meetingId, context);
+                      if (response != null && response.statusCode == 200) {
+                        // Successful response
+                        try {
+                          final body = json.decode(response.body);
+                          final meetingId = body['data'];
+                          validateMeeting(meetingId, context);
+                        } catch (e) {
+                          print("Error decoding response: $e");
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                                content: Text(
+                                    'Failed to start meeting. Please try again.')),
+                          );
+                        }
+                      } else {
+                        // Handle HTTP error or null response
+                        print("Failed to start meeting. Response: $response");
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                              content: Text(
+                                  'Failed to start meeting. Please try again.')),
+                        );
+                      }
                     },
                   ),
                 ),
@@ -109,30 +145,44 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  void validateMeeting(meetingId, context) async {
+  void validateMeeting(String meetingId, BuildContext context) async {
     try {
-      http.Response? response = await joinMeeting(meetingId);
-      var data = json.decode(response!.body);
+      print("Validating meeting ID: $meetingId");
 
-      final meetingDetails = MeetingDetail.fromJson(data['data']);
-      goToJoinScreen(meetingDetails);
+      http.Response? response = await joinMeeting(meetingId);
+
+      if (response != null && response.statusCode == 200) {
+        var data = json.decode(response.body);
+        final meetingDetails = MeetingDetail.fromJson(data['data']);
+        print("Meeting details: ${meetingDetails.toString()}");
+        goToJoinScreen(meetingDetails, context);
+      } else {
+        print(
+            "Invalid meeting ID or failed to join meeting. Status code: ${response?.statusCode}");
+        _showInvalidMeetingDialog(context);
+      }
     } catch (err) {
-      FormHelper.showSimpleAlertDialog(
-          context, "Meeting App", "Invalid Meeting ID", "OK", () {
-        Navigator.of(context).pop();
-      });
+      print("Error validating meeting: $err");
+      _showInvalidMeetingDialog(context);
     }
   }
 
-  goToJoinScreen(MeetingDetail meetingDetail) {
+  void goToJoinScreen(MeetingDetail meetingDetail, BuildContext context) {
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
         builder: (context) => JoinScreen(
-            meetingDetail: meetingDetail,
+          meetingDetail: meetingDetail,
         ),
       ),
     );
+  }
+
+  void _showInvalidMeetingDialog(BuildContext context) {
+    FormHelper.showSimpleAlertDialog(
+        context, "Meeting App", "Invalid Meeting ID", "OK", () {
+      Navigator.of(context).pop();
+    });
   }
 
   bool validateAndSave() {
