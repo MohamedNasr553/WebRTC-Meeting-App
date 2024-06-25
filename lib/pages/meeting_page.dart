@@ -61,7 +61,8 @@ class _MeetingPageState extends State<MeetingPage> {
   void startMeeting() async {
     final String? userId = await loadUserId();
     meetingHelper = WebRTCMeetingHelper(
-      url: "http://10.0.2.2:5000",
+      // url: "http://10.0.2.2:5000",
+      url: "http://192.168.1.40:5000",
       meetingId: widget.meetingDetail!.id,
       userId: userId,
       name: widget.name,

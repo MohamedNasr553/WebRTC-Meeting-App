@@ -1,10 +1,8 @@
 import 'dart:convert';
-
 import 'package:connect_cam/utils/user.utils.dart';
-import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 
-String MEETING_API_URL = "http://10.0.2.2:5000/api/meeting"; // for Android Emulator
+String MEETING_API_URL = "http://192.168.1.40:5000/api/meeting";
 
 var client = http.Client();
 
