@@ -120,7 +120,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         } catch (e) {
                           print("Error decoding response: $e");
                           ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
+                            const SnackBar(
                                 content: Text(
                                     'Failed to start meeting. Please try again.')),
                           );
@@ -129,7 +129,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         // Handle HTTP error or null response
                         print("Failed to start meeting. Response: $response");
                         ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
+                           const SnackBar(
                               content: Text(
                                   'Failed to start meeting. Please try again.')),
                         );

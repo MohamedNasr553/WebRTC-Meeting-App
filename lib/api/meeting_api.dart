@@ -2,7 +2,14 @@ import 'dart:convert';
 import 'package:connect_cam/utils/user.utils.dart';
 import 'package:http/http.dart' as http;
 
-String MEETING_API_URL = "http://192.168.1.40:5000/api/meeting";
+// Emulator
+// String MEETING_API_URL = "http://10.0.2.2:5000/api/meeting";
+
+// Real Mobile Device (Localhost)
+// String MEETING_API_URL = "http://192.168.1.40:5000/api/meeting";
+
+// On a server (Render)
+String MEETING_API_URL = "https://volunhero.onrender.com/api/meeting";
 
 var client = http.Client();
 

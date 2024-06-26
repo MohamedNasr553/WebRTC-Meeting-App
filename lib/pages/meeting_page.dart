@@ -61,8 +61,14 @@ class _MeetingPageState extends State<MeetingPage> {
   void startMeeting() async {
     final String? userId = await loadUserId();
     meetingHelper = WebRTCMeetingHelper(
+      // Emulator
       // url: "http://10.0.2.2:5000",
-      url: "http://192.168.1.40:5000",
+
+      // Real Mobile Device (Localhost)
+      // url: "http://192.168.1.40:5000",
+
+      // On a server (Render)
+      url: "https://volunhero.onrender.com",
       meetingId: widget.meetingDetail!.id,
       userId: userId,
       name: widget.name,
